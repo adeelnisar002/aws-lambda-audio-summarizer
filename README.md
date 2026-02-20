@@ -16,19 +16,7 @@ This project implements a production-ready serverless pipeline that:
 
 The solution uses a serverless event-driven architecture:
 
-```mermaid
-graph LR
-    A[Audio File] -->|Upload| B[S3 Audio Bucket]
-    B -->|S3 Event| C[Lambda: Transcribe]
-    C -->|Start Job| D[AWS Transcribe]
-    D -->|Output| E[S3 Text Bucket]
-    E -->|S3 Event| F[Lambda: Summarize]
-    F -->|Invoke| G[Amazon Bedrock]
-    G -->|Response| F
-    F -->|Save| E
-    F -->|Logs| H[CloudWatch]
-    G -->|Logs| H
-```
+![Serverless LLM Architecture](serverless-llm-architecture.png)
 
 ### Architecture Flow
 
@@ -40,6 +28,35 @@ graph LR
 6. **AI Summarization**: Lambda uses Amazon Bedrock to generate summary with sentiment and issues
 7. **Results Storage**: Summary is saved back to S3 as `results.txt`
 8. **Logging**: All Bedrock invocations are logged to CloudWatch for monitoring
+
+### Diagram Generation
+
+The architecture diagram above was generated using the [diagrams](https://github.com/mingrammer/diagrams) Python library, which creates cloud architecture diagrams using code. The diagram code is available in `generate_architecture_diagram.py`.
+
+**To regenerate the diagram:**
+
+1. Install the required dependencies:
+   ```bash
+   pip install diagrams
+   ```
+
+2. Install Graphviz (required for diagram rendering):
+   - **Windows**: `winget install Graphviz.Graphviz` or download from [Graphviz website](https://graphviz.org/download/)
+   - **macOS**: `brew install graphviz`
+   - **Linux**: `sudo apt-get install graphviz` (Ubuntu/Debian) or `sudo yum install graphviz` (RHEL/CentOS)
+
+3. Run the diagram generation script:
+   ```bash
+   python generate_architecture_diagram.py
+   ```
+
+The script uses AWS service icons from the diagrams library to visualize the complete event-driven pipeline, including:
+- **Storage Layer**: S3 buckets for audio files and transcripts
+- **Processing Layer**: Lambda functions for transcription and summarization
+- **AI Services**: AWS Transcribe and Amazon Bedrock
+- **Monitoring**: CloudWatch Logs for observability
+
+Color-coded edges represent different types of data flows (uploads, triggers, API calls, logs) to make the architecture easy to understand at a glance.
 
 ## ✨ Features
 
